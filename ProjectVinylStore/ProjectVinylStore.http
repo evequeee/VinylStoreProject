@@ -1,0 +1,6 @@
+@ProjectVinylStore_HostAddress = http://localhost:5177
+
+GET {{ProjectVinylStore_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
