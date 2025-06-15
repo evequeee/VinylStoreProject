@@ -3,11 +3,10 @@ using ProjectVinylStore.DataAccess.Entities;
 
 namespace ProjectVinylStore.DataAccess
 {
+
+
     public class AppDbContext : DbContext
     {
-        public DbSet<VinylRecord> Album { get; set; }
-        public DbSet<VinylRecord> Users { get; set; }
-        public DbSet<VinylRecord> Orders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -24,33 +23,22 @@ namespace ProjectVinylStore.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+           modelBuilder.Entity<VinylRecord>()
+                .HasKey(a => a.Id);
 
-            modelBuilder.Entity<VinylRecord>().HasData(
-                new VinylRecord
-                {
-                    Id = 1,
-                    Title = "Ride The Lightning",
-                    Artist = "Metallica",
-                    Genre = "Thrash-Metal",
-                    ReleaseDate = new DateTime(1984, 1, 1),
-                    Price = 39.99m,
-                    StockQuantity = 100,
-                    CoverImageUrl = "https://example.com/ride_the_lightning.jpg"
-                },
-                new VinylRecord
-                {
-                    Id = 2,
-                    Title = "example",
-                    Artist = "example",
-                    Genre = "example",
-                    ReleaseDate = new DateTime(1, 1, 1),
-                    Price = 1.1m,
-                    StockQuantity = 100,
-                    CoverImageUrl = "https://example.com/example.jpg"
-                }
-            );
+            modelBuilder.Entity<Order>()
+                .HasKey(o => o.Id);
+
+            modelBuilder.Entity<Order>()
+                .HasOne<User>(o => o.Users)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email)
+                .IsRequired()
+                .HasMaxLength(100);
         }
     }
 }

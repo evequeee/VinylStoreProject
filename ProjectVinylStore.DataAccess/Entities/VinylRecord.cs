@@ -13,13 +13,19 @@ namespace ProjectVinylStore.DataAccess.Entities
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public string Artist { get; set; } = string.Empty;
-        public string Genre { get; set; } = string.Empty;
-        public DateTime ReleaseDate { get; set; }
         public decimal Price { get; set; }
         public int StockQuantity { get; set; }
         public string CoverImageUrl { get; set; } = string.Empty;
+
+        public int AlbumId { get; set; }
+        public Album Album { get; set; }
+
+        // Computed Properties
+        public string Artist => Album?.Artist ?? string.Empty;
+        public string Genre => Album?.Genre ?? string.Empty;
+        public DateTime ReleaseDate => Album?.ReleaseDate ?? default;
     }
+
 
     public class VinylRecordConfiguration : IEntityTypeConfiguration<VinylRecord>
     {
