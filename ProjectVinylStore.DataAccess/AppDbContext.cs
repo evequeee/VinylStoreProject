@@ -5,11 +5,22 @@ namespace ProjectVinylStore.DataAccess
 {
     public class AppDbContext : DbContext
     {
+        public DbSet<VinylRecord> Album { get; set; }
+        public DbSet<VinylRecord> Users { get; set; }
+        public DbSet<VinylRecord> Orders { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql("Server=localhost;Database=ProjectVinylStoreData;User Id=sa;Password=1488;TrustServerCertificate=True;");
+            }
+        }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
-        public DbSet<VinylRecord> VinylRecords { get; set; } = null!;
+        public DbSet<VinylRecord> VinylRecords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
