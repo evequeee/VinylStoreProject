@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectVinylStore.DataAccess.Entities;
+using Npgsql.EntityFrameworkCore.PostgreSQL; 
 
 namespace ProjectVinylStore.DataAccess
 {
@@ -10,10 +11,7 @@ namespace ProjectVinylStore.DataAccess
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseNpgsql("Server=localhost;Database=ProjectVinylStoreData;User Id=sa;Password=1488;TrustServerCertificate=True;");
-            }
+                optionsBuilder.UseNpgsql("Host=localhost;Database=ProjectVinylStoreData;Username=postgres;Password=1488;TrustServerCertificate=True;");
         }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace ProjectVinylStore.DataAccess
 {
@@ -18,7 +19,7 @@ namespace ProjectVinylStore.DataAccess
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseNpgsql(connectionString);
 
             return new AppDbContext(optionsBuilder.Options);
         }
