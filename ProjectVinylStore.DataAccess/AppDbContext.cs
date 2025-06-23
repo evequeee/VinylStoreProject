@@ -18,6 +18,10 @@ namespace ProjectVinylStore.DataAccess
         }
 
         public DbSet<VinylRecord> VinylRecords { get; set; }
+        public DbSet<Album> Albums { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<User> Users { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +30,9 @@ namespace ProjectVinylStore.DataAccess
 
             modelBuilder.Entity<Order>()
                 .HasKey(o => o.Id);
+
+            modelBuilder.Entity<Album>()
+                .HasKey(a => a.Id);
 
             modelBuilder.Entity<Order>()
                 .HasOne<User>(o => o.Users)

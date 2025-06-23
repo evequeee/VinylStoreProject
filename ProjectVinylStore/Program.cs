@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectVinylStore.DataAccess;
+using System.Threading.Tasks;
 
 namespace ProjectVinylStore
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,20 @@ namespace ProjectVinylStore
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            }
+
+            if (!app.Environment.IsDevelopment())
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    var context = services.GetRequiredService<AppDbContext>();
+                    var dataSeeder = new DataSeeder(context);
+
+                    context.Database.EnsureCreated();
+
+                    await dataSeeder.SeedAllAsync();
+                }
             }
 
             app.UseHttpsRedirection();
