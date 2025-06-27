@@ -29,7 +29,7 @@ namespace ProjectVinylStore.DataAccess
         public async Task SeedUsersAsync(int count = 10)
         {
             if (await _context.Set<User>().AnyAsync())
-                return;
+                return; // Перевірка чи користувач вже існує
 
             var users = new List<User>();
 
@@ -39,7 +39,7 @@ namespace ProjectVinylStore.DataAccess
                 {
                     Name = $"User {i}",
                     Email = $"user{i}@gmail.com",
-                    Password = $"password{i}",
+                    Password = $"password{i}", //повинно бути захищено(hashed), але для прикладу просто текст
                     Orders = new List<Order>()
                 });
             }
