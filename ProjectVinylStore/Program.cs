@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectVinylStore.DataAccess;
+using ProjectVinylStore.DataAccess.Interfaces;
 using System.Threading.Tasks;
 
 namespace ProjectVinylStore
@@ -16,6 +17,7 @@ namespace ProjectVinylStore
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
             var app = builder.Build();
