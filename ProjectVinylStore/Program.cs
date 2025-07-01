@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectVinylStore.DataAccess;
 using ProjectVinylStore.DataAccess.Interfaces;
+using ProjectVinylStore.Business.Services;
 using System.Threading.Tasks;
 
 namespace ProjectVinylStore
@@ -18,6 +19,10 @@ namespace ProjectVinylStore
             builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IVinylBrowsingService, VinylBrowsingService>();
+            builder.Services.AddScoped<IOrderHistoryService, OrderHistoryService>();
+            builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 
 
             var app = builder.Build();

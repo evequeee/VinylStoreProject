@@ -17,7 +17,7 @@ namespace ProjectVinylStore.DataAccess.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<VinylRecord>> GetInStockVinylsAsync()
+        public async Task<IEnumerable<VinylRecord>> GetInStockVinylsAsync(string artist)
         {
             return await _context.VinylRecords
                 .Where(v => v.StockQuantity > 0)

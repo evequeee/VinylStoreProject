@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ProjectVinylStore.Business\ProjectVinylStore.Business.csproj" />
     <ProjectReference Include="..\ProjectVinylStore.DataAccess\ProjectVinylStore.DataAccess.csproj" />
   </ItemGroup>
 
