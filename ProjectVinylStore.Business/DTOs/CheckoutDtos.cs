@@ -2,7 +2,7 @@ namespace ProjectVinylStore.Business.DTOs
 {
     public class CheckoutRequestDto
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
         public List<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
         public ShippingDetailsDto ShippingDetails { get; set; } = new ShippingDetailsDto();
         public PaymentDetailsDto PaymentDetails { get; set; } = new PaymentDetailsDto();

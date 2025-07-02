@@ -7,7 +7,7 @@ namespace ProjectVinylStore.Business.Services
         // User Registration & Login
         Task<AuthResultDto> RegisterUserAsync(RegisterUserDto registerDto);
         Task<AuthResultDto> LoginUserAsync(LoginUserDto loginDto);
-        Task<UserDto?> GetUserByIdAsync(int userId);
+        Task<UserDto?> GetUserByIdAsync(string userId);
         Task<UserDto?> GetUserByEmailAsync(string email);
         Task<bool> ValidateUserCredentialsAsync(string email, string password);
     }

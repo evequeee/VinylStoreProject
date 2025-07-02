@@ -17,7 +17,7 @@ namespace ProjectVinylStore.DataAccess.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<VinylRecord>> GetInStockVinylsAsync(string artist)
+        public async Task<IEnumerable<VinylRecord>> GetInStockVinylsAsync()
         {
             return await _context.VinylRecords
                 .Where(v => v.StockQuantity > 0)
@@ -31,7 +31,7 @@ namespace ProjectVinylStore.DataAccess.Repositories
                 .ToListAsync();
         }
 
-        public async Task<VinylRecord> GetVinylWithAlbumDetailsAsync(int id)
+        public async Task<VinylRecord?> GetVinylWithAlbumDetailsAsync(int id)
         {
             return await _context.VinylRecords
                 .Include(v => v.Album)

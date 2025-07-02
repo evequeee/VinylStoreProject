@@ -28,25 +28,26 @@ namespace ProjectVinylStore.DataAccess
 
         public async Task SeedUsersAsync(int count = 10)
         {
-            if (await _context.Set<User>().AnyAsync())
-                return; // Перевірка чи користувач вже існує
+            if (await _context.Set<ApplicationUser>().AnyAsync())
+                return;
 
-            var users = new List<User>();
+            var users = new List<ApplicationUser>();
 
             for (int i = 0; i < count; i++)
             {
-                users.Add(new User
+                users.Add(new ApplicationUser 
                 {
-                    Name = $"User {i}",
+                    FirstName = $"User{i}",
+                    LastName = $"Lastname{i}",
                     Email = $"user{i}@gmail.com",
-                    Password = $"password{i}", //повинно бути захищено(hashed), але для прикладу просто текст
+                    UserName = $"user{i}@gmail.com",
+                    EmailConfirmed = true,
                     Orders = new List<Order>()
                 });
             }
 
             await _context.AddRangeAsync(users);
             await _context.SaveChangesAsync();
-
         }
 
         public async Task SeedAlbumsAsync(int count = 20)
@@ -125,7 +126,7 @@ namespace ProjectVinylStore.DataAccess
             if (await _context.Set<Order>().AnyAsync())
                 return;
 
-            var users = await _context.Set<User>().ToListAsync();
+            var users = await _context.Set<ApplicationUser>().ToListAsync();
             var vinylRecords = await _context.Set<VinylRecord>().ToListAsync();
             var orders = new List<Order>();
 
@@ -140,7 +141,7 @@ namespace ProjectVinylStore.DataAccess
                 {
                     ProductName = record.Title,
                     UserId = user.Id,
-                    Users = user,
+                    User = user,
                     OrderDate = orderDate,
                     TotalAmount = record.Price
                 });

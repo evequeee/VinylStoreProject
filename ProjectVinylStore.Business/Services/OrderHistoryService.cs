@@ -1,5 +1,6 @@
 using ProjectVinylStore.Business.DTOs;
 using ProjectVinylStore.Business.Services;
+using ProjectVinylStore.DataAccess.Entities;
 using ProjectVinylStore.DataAccess.Interfaces;
 
 namespace ProjectVinylStore.Business.Services
@@ -13,7 +14,7 @@ namespace ProjectVinylStore.Business.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<UserOrderHistoryDto> GetUserOrderHistoryAsync(int userId)
+        public async Task<UserOrderHistoryDto> GetUserOrderHistoryAsync(string userId)
         {
             var user = await _unitOfWork.Users.GetUserWithOrdersAsync(userId);
             if (user == null)
@@ -34,8 +35,8 @@ namespace ProjectVinylStore.Business.Services
                 User = new UserDto
                 {
                     Id = user.Id,
-                    Name = user.Name,
-                    Email = user.Email
+                    Name = $"{user.FirstName} {user.LastName}".Trim(),
+                    Email = user.Email ?? string.Empty
                 },
                 Orders = orderDtos
             };
@@ -46,7 +47,7 @@ namespace ProjectVinylStore.Business.Services
             var order = await _unitOfWork.Orders.GetByIdAsync(orderId);
             if (order == null) return null;
 
-            var user = await _unitOfWork.Users.GetByIdAsync(order.UserId);
+            var user = await _unitOfWork.Users.GetByIdAsync(order.UserId) as ApplicationUser;
 
             return new OrderDetailDto
             {
@@ -56,9 +57,9 @@ namespace ProjectVinylStore.Business.Services
                 TotalAmount = order.TotalAmount,
                 User = new UserDto
                 {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Email = user.Email
+                    Id = user?.Id ?? string.Empty,
+                    Name = user != null ? $"{user.FirstName} {user.LastName}".Trim() : string.Empty,
+                    Email = user?.Email ?? string.Empty
                 }
             };
         }

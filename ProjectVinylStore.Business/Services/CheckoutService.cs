@@ -50,11 +50,11 @@ namespace ProjectVinylStore.Business.Services
             };
         }
 
-        public async Task<bool> ValidatePaymentAsync(PaymentDetailsDto paymentDetails)
+        public Task<bool> ValidatePaymentAsync(PaymentDetailsDto paymentDetails)
         {
-            // todo: Implement actual payment validation
-            return !string.IsNullOrEmpty(paymentDetails.PaymentMethod) &&
-                   !string.IsNullOrEmpty(paymentDetails.CardNumber);
+            // TODO: Implement actual payment validation
+            return Task.FromResult(!string.IsNullOrEmpty(paymentDetails.PaymentMethod) &&
+                   !string.IsNullOrEmpty(paymentDetails.CardNumber));
         }
 
         public async Task<decimal> CalculateTotalAsync(List<OrderItemDto> items)

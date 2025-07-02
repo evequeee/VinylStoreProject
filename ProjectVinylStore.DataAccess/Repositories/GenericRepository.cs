@@ -15,7 +15,7 @@ namespace ProjectVinylStore.DataAccess.Repositories
             _dbSet = context.Set<T>();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(object id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -30,7 +30,7 @@ namespace ProjectVinylStore.DataAccess.Repositories
             return await _dbSet.Where(expression).ToListAsync();
         }
 
-        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> expression)
+        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> expression)
         {
             return await _dbSet.FirstOrDefaultAsync(expression);
         }
@@ -52,7 +52,7 @@ namespace ProjectVinylStore.DataAccess.Repositories
 
         public void Update(T entity)
         {
-            _dbSet.Update(entity);
+            _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
         }
 

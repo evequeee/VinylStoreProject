@@ -4,20 +4,20 @@ using ProjectVinylStore.DataAccess.Interfaces;
 
 namespace ProjectVinylStore.DataAccess.Repositories
 {
-    public class UserRepository : GenericRepository<User>, IUserRepository
+    public class UserRepository : GenericRepository<ApplicationUser>, IUserRepository
     {
         public UserRepository(AppDbContext context) : base(context)
         {
         }
 
-        public async Task<User> GetUserWithOrdersAsync(int userId)
+        public async Task<ApplicationUser?> GetUserWithOrdersAsync(string userId)
         {
             return await _context.Users
                 .Include(u => u.Orders)
                 .FirstOrDefaultAsync(u => u.Id == userId);
         }
 
-        public async Task<User> GetUserByEmailAsync(string email)
+        public async Task<ApplicationUser?> GetUserByEmailAsync(string email)
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);

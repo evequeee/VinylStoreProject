@@ -2,9 +2,9 @@ using ProjectVinylStore.DataAccess.Entities;
 
 namespace ProjectVinylStore.DataAccess.Interfaces
 {
-    public interface IUserRepository : IGenericRepository<User>
+    public interface IUserRepository : IGenericRepository<ApplicationUser>
     {
-        Task<User> GetUserWithOrdersAsync(int userId);
-        Task<User> GetUserByEmailAsync(string email);
+        Task<ApplicationUser?> GetUserWithOrdersAsync(string userId);
+        Task<ApplicationUser?> GetUserByEmailAsync(string email);
     }
 }

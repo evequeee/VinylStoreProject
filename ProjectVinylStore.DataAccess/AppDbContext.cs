@@ -1,18 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProjectVinylStore.DataAccess.Entities;
-using Npgsql.EntityFrameworkCore.PostgreSQL; 
 
 namespace ProjectVinylStore.DataAccess
 {
-
-
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext <ApplicationUser>
     {
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-                optionsBuilder.UseNpgsql("Host=localhost;Database=ProjectVinylStoreData;Username=postgres;Password=1488;TrustServerCertificate=True;");
-        }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
@@ -20,13 +13,13 @@ namespace ProjectVinylStore.DataAccess
         public DbSet<VinylRecord> VinylRecords { get; set; }
         public DbSet<Album> Albums { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<User> Users { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           modelBuilder.Entity<VinylRecord>()
-                .HasKey(a => a.Id);
+            base.OnModelCreating(modelBuilder); // Important for Identity
+
+            modelBuilder.Entity<VinylRecord>()
+                .HasKey(v => v.Id);
 
             modelBuilder.Entity<Order>()
                 .HasKey(o => o.Id);
@@ -35,15 +28,16 @@ namespace ProjectVinylStore.DataAccess
                 .HasKey(a => a.Id);
 
             modelBuilder.Entity<Order>()
-                .HasOne<User>(o => o.Users)
+                .HasOne<ApplicationUser>(o => o.User)
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Email)
-                .IsRequired()
-                .HasMaxLength(100);
+            modelBuilder.Entity<VinylRecord>()
+                .HasOne(v => v.Album)
+                .WithMany()
+                .HasForeignKey(v => v.AlbumId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

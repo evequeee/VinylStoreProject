@@ -1,6 +1,6 @@
 namespace ProjectVinylStore.Business.DTOs
 {
-    // User Story: User Registration & Login
+    //User Registration & Login
     public class RegisterUserDto
     {
         public string Name { get; set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace ProjectVinylStore.Business.DTOs
 
     public class UserDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
     }

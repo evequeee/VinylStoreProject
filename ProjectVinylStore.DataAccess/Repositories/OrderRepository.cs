@@ -11,7 +11,7 @@ namespace ProjectVinylStore.DataAccess.Repositories
         {
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId)
+        public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId)
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
@@ -31,7 +31,6 @@ namespace ProjectVinylStore.DataAccess.Repositories
             return await _context.Orders
                 .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate)
                 .SumAsync(o => o.TotalAmount);
-
         }
     }
 }
