@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ProjectVinylStore.Business.DTOs;
+using ProjectVinylStore.Business.Exceptions;
 using ProjectVinylStore.Business.Services;
 using ProjectVinylStore.DataAccess.Entities;
 using System.IdentityModel.Tokens.Jwt;
@@ -33,11 +34,7 @@ namespace ProjectVinylStore.Business.Services
             var existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
             if (existingUser != null)
             {
-                return new AuthResponseDto
-                {
-                    IsSuccess = false,
-                    Message = "User with this email already exists"
-                };
+                throw ApiException.BadRequest("User with this email already exists", "EMAIL_ALREADY_EXISTS");
             }
 
             // Create new user
@@ -83,13 +80,9 @@ namespace ProjectVinylStore.Business.Services
         public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
+            if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
-                return new AuthResponseDto
-                {
-                    IsSuccess = false,
-                    Message = "Invalid email or password"
-                };
+                throw ApiException.Unauthorized("Invalid email or password");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);

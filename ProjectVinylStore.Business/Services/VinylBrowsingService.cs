@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectVinylStore.Business.DTOs;
+using ProjectVinylStore.Business.Exceptions;
 using ProjectVinylStore.Business.Services;
 using ProjectVinylStore.DataAccess.Interfaces;
 
@@ -18,6 +19,16 @@ namespace ProjectVinylStore.Business.Services
         {
             var allVinyls = await _unitOfWork.VinylRecords.GetAllAsync();
             var query = allVinyls.AsQueryable();
+
+            if (searchDto.Page <= 0)
+            {
+                throw ApiException.BadRequest("Page number must be greater than 0", "INVALID_PAGE");
+            }
+
+            if (searchDto.PageSize <= 0 || searchDto.PageSize > 100)
+            {
+                throw ApiException.BadRequest("Page size must be between 1 and 100", "INVALID_PAGE_SIZE");
+            }
 
             if (!string.IsNullOrEmpty(searchDto.SearchTerm))
             {
@@ -74,7 +85,10 @@ namespace ProjectVinylStore.Business.Services
         public async Task<VinylDetailDto?> GetVinylDetailAsync(int vinylId)
         {
             var vinyl = await _unitOfWork.VinylRecords.GetVinylWithAlbumDetailsAsync(vinylId);
-            if (vinyl == null) return null;
+            if (vinyl == null)
+            {
+                throw ApiException.NotFound("Vinyl record", vinylId);
+            }
 
             return new VinylDetailDto
             {

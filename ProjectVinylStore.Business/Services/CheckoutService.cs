@@ -1,4 +1,5 @@
 using ProjectVinylStore.Business.DTOs;
+using ProjectVinylStore.Business.Exceptions;
 using ProjectVinylStore.Business.Services;
 using ProjectVinylStore.DataAccess.Interfaces;
 using ProjectVinylStore.DataAccess.Entities;
@@ -20,11 +21,16 @@ namespace ProjectVinylStore.Business.Services
             var isPaymentValid = await ValidatePaymentAsync(checkoutRequest.PaymentDetails);
             if (!isPaymentValid)
             {
-                throw new InvalidOperationException("Payment validation failed");
+                throw ApiException.BadRequest("Payment validation failed", "PAYMENT_INVALID");
             }
 
             // Calculate total
             var totalAmount = await CalculateTotalAsync(checkoutRequest.Items);
+
+            if (totalAmount <= 0)
+            {
+                throw ApiException.BadRequest("Order total must be greater than zero", "INVALID_TOTAL");
+            }
 
             // Create order
             var order = new Order
@@ -52,9 +58,15 @@ namespace ProjectVinylStore.Business.Services
 
         public Task<bool> ValidatePaymentAsync(PaymentDetailsDto paymentDetails)
         {
-            // TODO: Implement actual payment validation
-            return Task.FromResult(!string.IsNullOrEmpty(paymentDetails.PaymentMethod) &&
-                   !string.IsNullOrEmpty(paymentDetails.CardNumber));
+            // Basic validation - in production implement proper payment gateway validation
+            if (string.IsNullOrWhiteSpace(paymentDetails.PaymentMethod))
+                return Task.FromResult(false);
+
+            if (string.IsNullOrWhiteSpace(paymentDetails.CardNumber))
+                return Task.FromResult(false);
+
+            // Additional validations can be added here
+            return Task.FromResult(true);
         }
 
         public async Task<decimal> CalculateTotalAsync(List<OrderItemDto> items)
@@ -63,12 +75,24 @@ namespace ProjectVinylStore.Business.Services
 
             foreach (var item in items)
             {
+                if (item.Quantity <= 0)
+                {
+                    throw ApiException.BadRequest($"Invalid quantity for item {item.ProductName}", "INVALID_QUANTITY");
+                }
+
                 // Verify vinyl exists and get current price
                 var vinyl = await _unitOfWork.VinylRecords.GetByIdAsync(item.VinylRecordId);
-                if (vinyl != null)
+                if (vinyl == null)
                 {
-                    total += vinyl.Price * item.Quantity;
+                    throw ApiException.NotFound("Vinyl record", item.VinylRecordId);
                 }
+
+                if (vinyl.StockQuantity < item.Quantity)
+                {
+                    throw ApiException.BadRequest($"Not enough stock for {vinyl.Title}. Available: {vinyl.StockQuantity}", "INSUFFICIENT_STOCK");
+                }
+
+                total += vinyl.Price * item.Quantity;
             }
 
             return total;
