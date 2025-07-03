@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ProjectVinylStore.Business.DTOs
 {
     public class VinylRecordDto
@@ -15,12 +17,25 @@ namespace ProjectVinylStore.Business.DTOs
 
     public class VinylSearchDto
     {
+        [StringLength(100, ErrorMessage = "Search term must not exceed 100 characters")]
         public string? SearchTerm { get; set; }
+
+        [StringLength(50, ErrorMessage = "Genre must not exceed 50 characters")]
         public string? Genre { get; set; }
+
+        [StringLength(100, ErrorMessage = "Artist must not exceed 100 characters")]
         public string? Artist { get; set; }
+
+        [Range(0, 10000, ErrorMessage = "Minimum price must be between 0 and 10000")]
         public decimal? MinPrice { get; set; }
+
+        [Range(0, 10000, ErrorMessage = "Maximum price must be between 0 and 10000")]
         public decimal? MaxPrice { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Page must be greater than 0")]
         public int Page { get; set; } = 1;
+
+        [Range(1, 100, ErrorMessage = "Page size must be between 1 and 100")]
         public int PageSize { get; set; } = 10;
     }
 

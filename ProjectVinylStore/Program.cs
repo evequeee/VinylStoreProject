@@ -1,12 +1,16 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProjectVinylStore.Business.DTOs;
 using ProjectVinylStore.Business.Services;
+using ProjectVinylStore.Business.Validators;
 using ProjectVinylStore.DataAccess;
 using ProjectVinylStore.DataAccess.Entities;
 using ProjectVinylStore.DataAccess.Interfaces;
+using ProjectVinylStore.Middleware;
 using System.Text;
 
 namespace ProjectVinylStore
@@ -24,6 +28,11 @@ namespace ProjectVinylStore
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // FluentValidation
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddFluentValidationClientsideAdapters();
+            builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
 
             // Database configuration
             builder.Services.AddDbContext<AppDbContext>(options =>
@@ -80,8 +89,11 @@ namespace ProjectVinylStore
                 app.UseSwaggerUI();
             }
 
+            // Add global exception handling middleware
+            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
             app.UseHttpsRedirection();
-            app.UseAuthentication(); 
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 
@@ -92,10 +104,10 @@ namespace ProjectVinylStore
                 {
                     var services = scope.ServiceProvider;
                     var context = services.GetRequiredService<AppDbContext>();
-                    
+
                     // Ensure database is created
                     await context.Database.EnsureCreatedAsync();
-                    
+
                     // Seed roles and admin user if needed
                     await SeedRolesAndAdminAsync(services);
                 }
@@ -122,7 +134,7 @@ namespace ProjectVinylStore
             // Create admin user
             var adminEmail = "admin@vinylstore.com";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
-            
+
             if (adminUser == null)
             {
                 adminUser = new ApplicationUser
